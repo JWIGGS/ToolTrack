@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1017130460903",
+    "firebase_url": "https://tooltrack-8c83f.firebaseio.com",
+    "project_id": "tooltrack-8c83f",
+    "storage_bucket": "tooltrack-8c83f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1017130460903:android:44c88aa832d92bf86d2442",
+        "android_client_info": {
+          "package_name": "com.stuff.tooltrack"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1017130460903-oq5sou2jav0leu4f8vo1o0pj3mjlt0bn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQbCmw86_u-XaMd-dPbvrZAE4OdnurVlg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1017130460903-oq5sou2jav0leu4f8vo1o0pj3mjlt0bn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
