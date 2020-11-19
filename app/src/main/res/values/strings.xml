@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">ToolTrack</string>
+    <string name="default_student_id">100</string>
+    <string name="default_student_email">@mymail.sutd.edu.sg</string>
+    <string name="invalid_student_id">Invalid student ID</string>
+    <string name="invalid_student_email">Invalid student email</string>
 </resources>

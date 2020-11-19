@@ -14,6 +14,7 @@
         android:ems="10"
         android:hint="1001234"
         android:inputType="number"
+        android:text="@string/default_student_id"
         app:layout_constraintBottom_toTopOf="@+id/textViewStudentEmail"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -26,6 +27,7 @@
         android:ems="10"
         android:hint="example@mymail.sutd.edu.sg"
         android:inputType="textEmailAddress"
+        android:text="@string/default_student_email"
         app:layout_constraintBottom_toTopOf="@+id/buttonLogin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.509"
@@ -71,6 +73,7 @@
         android:layout_width="205dp"
         android:layout_height="33dp"
         android:gravity="center"
+        android:textColor="#FF0101"
         app:layout_constraintBottom_toTopOf="@+id/buttonLogin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

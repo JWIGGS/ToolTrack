@@ -34,13 +34,6 @@ public class MainActivity extends AppCompatActivity {
         textViewDisplay = findViewById(R.id.textViewDisplay);
 
 
-        buttonPush.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                myRef.setValue(editTextValue.getText().toString());
-            }
-        });
-
         ValueEventListener valueListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -55,6 +48,12 @@ public class MainActivity extends AppCompatActivity {
         myRef.addValueEventListener(valueListener);
 
 
+    }
+
+
+
+    public void onButtonPushPressed(View view){
+        myRef.setValue(editTextValue.getText().toString());
     }
 
 
