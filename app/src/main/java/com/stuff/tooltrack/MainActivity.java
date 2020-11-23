@@ -23,6 +23,12 @@ public class MainActivity extends AppCompatActivity {
     Button buttonPush;
     TextView textViewDisplay;
 
+    TextView textViewDisplay2;
+    TextView textViewDisplay3;
+
+    String studentID;
+    String studentEmail;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
         editTextValue = findViewById(R.id.editTextValue);
         buttonPush = findViewById(R.id.buttonPush);
         textViewDisplay = findViewById(R.id.textViewDisplay);
+
+        textViewDisplay2 = findViewById(R.id.textViewDisplay2);
+        textViewDisplay3 = findViewById(R.id.textViewDisplay3);
 
 
         ValueEventListener valueListener = new ValueEventListener() {
@@ -46,6 +55,19 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         myRef.addValueEventListener(valueListener);
+
+        if(getIntent().getExtras() != null){
+            studentID = getIntent().getStringExtra("id");
+            studentEmail = getIntent().getStringExtra("email");
+
+            textViewDisplay2.setText(studentID);
+            textViewDisplay3.setText(studentEmail);
+        }
+        else{
+            textViewDisplay2.setText("error");
+            textViewDisplay3.setText("error");
+            //onBackPressed();
+        }
 
 
     }

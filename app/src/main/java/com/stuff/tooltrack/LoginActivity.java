@@ -18,7 +18,10 @@ public class LoginActivity extends AppCompatActivity {
     Button buttonLogin;
     TextView textViewError;
 
-    Integer studentID;
+
+
+    Integer studentIDNumber;
+    String studentID;
     String studentEmail;
 
     Context context;
@@ -36,11 +39,10 @@ public class LoginActivity extends AppCompatActivity {
         textViewError = findViewById(R.id.textViewError);
 
         context = getApplicationContext();
-        sharedPref = context.getSharedPreferences("com.stuff.tooltrack.saves", context.MODE_PRIVATE);
+        sharedPref = context.getSharedPreferences("com.stuff.tooltrack", context.MODE_PRIVATE);
         editor = sharedPref.edit();
 
-
-        editTextStudentID.setText(Integer.toString(sharedPref.getInt("id", Integer.parseInt(getString(R.string.default_student_id)))));
+        editTextStudentID.setText(sharedPref.getString("id", "100"));
         editTextStudentEmail.setText(sharedPref.getString("email", getString(R.string.default_student_email)));
 
     }
@@ -50,15 +52,14 @@ public class LoginActivity extends AppCompatActivity {
 
         String error = "";
 
-        //TODO: check if id and email are valid
-
-        studentID = Integer.parseInt(editTextStudentID.getText().toString());
+        studentID = editTextStudentID.getText().toString();
+        studentIDNumber = Integer.parseInt(studentID);
         studentEmail = editTextStudentEmail.getText().toString();
 
         String defaultEmail = getString(R.string.default_student_email);
         Integer defaultEmailLength = defaultEmail.length();
 
-        if(studentID<1000000 || studentID > 1099999){
+        if(studentIDNumber<1000000 || studentIDNumber > 1099999){
             error = getString(R.string.invalid_student_id);
         }
         else if(studentEmail.length()<defaultEmailLength+5 || !studentEmail.substring(studentEmail.length()-defaultEmailLength).equals(defaultEmail)){
@@ -69,13 +70,14 @@ public class LoginActivity extends AppCompatActivity {
         if(error == "") {
 
             //save the id and email to shared preferences
-
-            editor.putInt("id", studentID);
+            editor.putString("id", studentID);
             editor.putString("email", studentEmail);
             editor.apply();
 
             //launch new activity
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, ActivityView.class);
+            intent.putExtra("id", studentID);
+            intent.putExtra("email", studentEmail);
             startActivity(intent);
 
 
