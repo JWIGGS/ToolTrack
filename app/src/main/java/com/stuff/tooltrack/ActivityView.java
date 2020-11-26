@@ -3,6 +3,8 @@ package com.stuff.tooltrack;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -160,9 +162,15 @@ public class ActivityView extends AppCompatActivity {
 
         editTextToolEditName.setText(tool.getName());
 
+
+        popupView.setBackgroundResource(R.drawable.layout_bg_rounded);
+        popupView.setClipToOutline(true);
+
         builder.setView(popupView);
         AlertDialog dialog = builder.create();
         dialog.show();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
 
     }
 

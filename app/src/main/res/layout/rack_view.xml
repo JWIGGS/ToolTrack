@@ -15,6 +15,7 @@
         android:clickable="true"
         android:scaleX=".5"
         android:scaleY=".5"
+        app:backgroundTint="@color/white"
         app:layout_constraintStart_toEndOf="@+id/textViewRackName"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_menu_edit" />
