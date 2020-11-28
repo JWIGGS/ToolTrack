@@ -1,37 +1,43 @@
 package com.stuff.tooltrack;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Tool {
+public class Tool extends DatabaseView{
 
-    private View toolView;
-    private String key;
-
-    private Boolean available;
+    private boolean available;
     private String name;
     private String rack;
-    private Integer time;
-    private Integer user;
+    private long time;
+    private long user;
 
-    public Tool(DataSnapshot tool, View view){
-        available = (Boolean) tool.child("available").getValue();
-        name = tool.child("name").getValue().toString();
-        rack = tool.child("rack").getValue().toString();
+    public Tool(DatabaseReference refData, DataSnapshot snap, View view, String child){
 
-        time = Integer.parseInt(tool.child("time").getValue().toString());
-        user = Integer.parseInt(tool.child("user").getValue().toString());
+        super(refData, snap, view, child);
 
-        key = tool.getKey();
-        toolView = view;
+        available = snap.child("available").getValue().toString().equals("true");
+        name = snap.child("name").getValue().toString();
+        rack = snap.child("rack").getValue().toString();
+
+        time = (long) snap.child("time").getValue();
+        user = (long) snap.child("user").getValue();
     }
 
-    public Boolean getAvailable() {
+    public boolean getAvailable() {
         return available;
     }
 
@@ -41,6 +47,7 @@ public class Tool {
 
     public void setName(String name) {
         this.name = name;
+        getRef().child("name").setValue(name);
     }
 
     public String getRack() {
@@ -49,47 +56,58 @@ public class Tool {
 
     public void setRack(String rack) {
         this.rack = rack;
+        getRef().child("rack").setValue(rack);
     }
 
-    public Integer getTime() {
+    public long getTime() {
         return time;
     }
 
     public void setTime(Integer time) {
         this.time = time;
+        getRef().child("time").setValue(time);
     }
 
-    public Integer getUser() {
+    public long getUser() {
         return user;
     }
 
     public void setUser(Integer user) {
         this.user = user;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public View getToolView() {
-        return toolView;
+        getRef().child("user").setValue(user);
     }
 
 
 
+    public void updateView(){
+        View v = getView();
 
-    public static void createNewTool(DatabaseReference refData, String key){
+        TextView textViewToolName = v.findViewById(R.id.textViewToolName);;
+        TextView textViewToolStatus = v.findViewById(R.id.textViewToolStatus);
+        TextView textViewToolLocation = v.findViewById(R.id.textViewToolLocation);
+        ImageView imageViewToolStatus = v.findViewById(R.id.imageViewToolStatus);
+        FloatingActionButton buttonToolEdit = v.findViewById(R.id.buttonToolEdit);
 
-        Map<String, Object> newTool = new HashMap<>();
-        newTool.put("available", true);
-        newTool.put("name", "Default Tool");
-        newTool.put("rack", "rack0");
-        newTool.put("time", 0);
-        newTool.put("user", 0);
+        textViewToolName.setText(getName());
 
-        refData.child("tools").child(key).setValue(newTool);
+        textViewToolStatus.setText("Status: "+(getAvailable()?"available": "not available"));
+        imageViewToolStatus.setImageResource(getAvailable()? android.R.drawable.presence_online: android.R.drawable.presence_offline);
+
+        textViewToolLocation.setText("Location: "+getRack());
+
+        buttonToolEdit.setTag(getKey());
     }
 
 
+    public void displayEditPopup(Context context){
+        View popupView = LayoutInflater.from(context).inflate(R.layout.tool_edit_popup, null);
+
+        EditText editTextToolEditName = popupView.findViewById(R.id.editTextToolEditName);
+
+        editTextToolEditName.setText(name);
+
+        displayAlertView(context, popupView);
+
+    }
 
 }

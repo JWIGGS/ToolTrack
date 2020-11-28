@@ -31,7 +31,6 @@ public class ActivityView extends AppCompatActivity {
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference refData = database.getReference();
-    DatabaseReference refTools = refData.child("tools");
     DataSnapshot currentDatabase;
 
     HashMap<String, Tool> toolMap;
@@ -82,23 +81,17 @@ public class ActivityView extends AppCompatActivity {
                 View rackLayout = LayoutInflater.from(this).inflate(R.layout.rack_view, null);
 
                 //create a new rack
-                rack = new Rack(rackData, rackLayout);
+                rack = new Rack(refData, rackData, rackLayout, "racks");
                 rackMap.put(key, rack);
 
                 //put rack layout inside main layout
-                linearLayout.addView(rackLayout);
+                linearLayout.addView(rack.getView());
             }
 
-            updateRackLayout(rack, rack.getRackView());
+            rack.updateView();
 
         }
 
-    }
-
-    public void updateRackLayout(Rack rack, View rackLayout){
-        TextView textViewRackName = rackLayout.findViewById(R.id.textViewRackName);
-
-        textViewRackName.setText(rack.getName());
     }
 
 
@@ -118,59 +111,31 @@ public class ActivityView extends AppCompatActivity {
                 View toolLayout = LayoutInflater.from(this).inflate(R.layout.tool_view, null);
 
                 //create a new tool
-                tool = new Tool(toolData, toolLayout);
+                tool = new Tool(refData, toolData, toolLayout, "tools");
                 toolMap.put(key, tool);
 
                 //put tool layout inside the rack layout
-                LinearLayout rackLinearLayout = rackMap.get(tool.getRack()).getRackView().findViewById(R.id.linearLayoutRack);
-                rackLinearLayout.addView(toolLayout);
+                LinearLayout rackLinearLayout = rackMap.get(tool.getRack()).getView().findViewById(R.id.linearLayoutRack);
+                rackLinearLayout.addView(tool.getView());
             }
 
-            updateToolLayout(tool, tool.getToolView());
+            tool.updateView();
 
 
         }
 
     }
 
-    public void updateToolLayout(Tool tool, View toolLayout){
-        TextView textViewToolName = toolLayout.findViewById(R.id.textViewToolName);;
-        TextView textViewToolStatus = toolLayout.findViewById(R.id.textViewToolStatus);
-        TextView textViewToolLocation = toolLayout.findViewById(R.id.textViewToolLocation);
-        ImageView imageViewToolStatus = toolLayout.findViewById(R.id.imageViewToolStatus);
-        FloatingActionButton buttonToolEdit = toolLayout.findViewById(R.id.buttonToolEdit);
-
-        textViewToolName.setText(tool.getName());
-
-        textViewToolStatus.setText("Status: "+(tool.getAvailable()?"available": "not available"));
-        imageViewToolStatus.setImageResource(tool.getAvailable()? android.R.drawable.presence_online: android.R.drawable.presence_offline);
-
-        textViewToolLocation.setText("Location: "+tool.getRack());
-
-        buttonToolEdit.setTag(tool.getKey());
-    }
-
 
     public void onToolEditButtonPressed(View v){
 
-        Tool tool = toolMap.get(v.getTag());
+        toolMap.get(v.getTag()).displayEditPopup(this);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View popupView = LayoutInflater.from(this).inflate(R.layout.tool_edit_popup, null);
+    }
 
-        EditText editTextToolEditName = popupView.findViewById(R.id.editTextToolEditName);
+    public void onRackEditButtonPressed(View v){
 
-        editTextToolEditName.setText(tool.getName());
-
-
-        popupView.setBackgroundResource(R.drawable.layout_bg_rounded);
-        popupView.setClipToOutline(true);
-
-        builder.setView(popupView);
-        AlertDialog dialog = builder.create();
-        dialog.show();
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
+        rackMap.get(v.getTag()).displayEditPopup(this);
 
     }
 
