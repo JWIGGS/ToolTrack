@@ -149,8 +149,13 @@ public class Rack extends DatabaseView{
                 if(toolAvail != toolAvailPrev){
                     historyChanges.put(tool.getKey(), toolAvail? "return": "borrow");
 
-                    tool.setTime(timestamp);
-                    tool.setUser(toolAvail? "": user.getID());
+                    if(toolAvail){
+                        user.returnTool(tool, timestamp);
+                    }
+                    else{
+                        user.borrowTool(tool, timestamp);
+                    }
+
 
                 }
 

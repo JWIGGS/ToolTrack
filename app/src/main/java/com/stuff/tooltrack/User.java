@@ -3,6 +3,7 @@ package com.stuff.tooltrack;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class User {
@@ -14,6 +15,7 @@ public class User {
 
     private static Context context;
     private static SharedPreferences sharedPref;
+    private DatabaseReference refUser;
 
     public User(Context context) {
         this.context = context;
@@ -21,6 +23,8 @@ public class User {
 
         setID(getSavedID());
         setEmail(getSavedEmail());
+
+        updateDatabaseReference();
     }
 
 
@@ -44,8 +48,8 @@ public class User {
         return "";
     }
 
-    public boolean checkValidCredentials(){
-        return !getCredentialsError().isEmpty();
+    public boolean hasValidCredentials(){
+        return getCredentialsError().isEmpty();
     }
 
 
@@ -73,6 +77,8 @@ public class User {
 
     public void setID(String id){
         this.id = id;
+
+        updateDatabaseReference();
     }
 
     public String getEmail(){
@@ -86,6 +92,8 @@ public class User {
     public void setEmail(String email){
         this.email = email;
         this.name = parseName();
+
+        updateDatabaseReference();
     }
 
     public void setCredentials(String id, String email){
@@ -111,6 +119,34 @@ public class User {
     public void setRack(String rack){
         this.rack = rack;
     }
-    
+
+    public void updateDatabaseReference(){
+        if(id!= null && email!= null && hasValidCredentials()){
+            refUser = FirebaseDatabase.getInstance().getReference().child("users").child(id);
+        }
+    }
+
+    public void updateDatabaseCredentials(){
+        refUser.child("email").setValue(email);
+
+    }
+
+    public void borrowTool(Tool tool, String timestamp){
+
+        tool.setTime(timestamp);
+        tool.setUser(id);
+
+        refUser.child("tools").child(tool.getKey()).setValue(timestamp);
+
+    }
+
+    public void returnTool(Tool tool, String timestamp){
+
+        tool.setTime(timestamp);
+        tool.setUser("");
+
+        refUser.child("tools").child(tool.getKey()).removeValue();
+    }
+
 
 }

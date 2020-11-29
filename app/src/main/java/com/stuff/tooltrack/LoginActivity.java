@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.database.FirebaseDatabase;
+
 public class LoginActivity extends AppCompatActivity {
 
     EditText editTextStudentID;
@@ -49,6 +51,8 @@ public class LoginActivity extends AppCompatActivity {
         if(error.isEmpty()) {
 
             user.saveCredentials();
+
+            user.updateDatabaseCredentials();
 
             //launch new activity
             Intent intent = new Intent(this, ActivityView.class);

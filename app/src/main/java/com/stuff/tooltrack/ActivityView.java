@@ -27,6 +27,7 @@ public class ActivityView extends AppCompatActivity {
     DatabaseReference refData = database.getReference();
     DatabaseReference refFabLab = refData.child("fablab");
 
+
     HashMap<String, Tool> toolMap;
     HashMap<String, Rack> rackMap;
 
@@ -48,7 +49,7 @@ public class ActivityView extends AppCompatActivity {
         user = new User(context);
 
         //invalid credentials
-        if(user.checkValidCredentials()){
+        if(!user.hasValidCredentials()){
             finish();
         }
 
@@ -154,8 +155,6 @@ public class ActivityView extends AppCompatActivity {
 }
 
 /*TODO:
-
-2. update the user data object when obrrowing/returning
 3. view the history logs
 4. user view current checkout values
 5. tool edit
