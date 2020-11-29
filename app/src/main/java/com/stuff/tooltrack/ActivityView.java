@@ -25,7 +25,7 @@ public class ActivityView extends AppCompatActivity {
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference refData = database.getReference();
-    DataSnapshot currentDatabase;
+    DatabaseReference refFabLab = refData.child("fablab");
 
     HashMap<String, Tool> toolMap;
     HashMap<String, Rack> rackMap;
@@ -52,11 +52,12 @@ public class ActivityView extends AppCompatActivity {
             finish();
         }
 
-        //listen for tool changes
-        ValueEventListener changeListener = new ValueEventListener() {
+
+
+        //listen for fab lab changes
+        ValueEventListener fablabChangeListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                currentDatabase = dataSnapshot;
                 updateRacks(dataSnapshot.child("racks"));
                 updateTools(dataSnapshot.child("tools"));
             }
@@ -66,9 +67,7 @@ public class ActivityView extends AppCompatActivity {
                 //do stuff like log errors or what not
             }
         };
-        refData.addValueEventListener(changeListener);
-
-
+        refFabLab.addValueEventListener(fablabChangeListener);
     }
 
     @Override
@@ -94,7 +93,7 @@ public class ActivityView extends AppCompatActivity {
                 rack = rackMap.get(key);
             } else {
                 //create a new rack
-                rack = new Rack(refData, rackData, LayoutInflater.from(this).inflate(R.layout.rack_view, null), "racks");
+                rack = new Rack(refFabLab, rackData, LayoutInflater.from(this).inflate(R.layout.rack_view, null), "racks");
                 rackMap.put(key, rack);
 
                 //put rack layout inside main layout
@@ -120,7 +119,7 @@ public class ActivityView extends AppCompatActivity {
             }
             else{
                 //create a new tool
-                tool = new Tool(refData, toolData, LayoutInflater.from(this).inflate(R.layout.tool_view, null), "tools");
+                tool = new Tool(refFabLab, toolData, LayoutInflater.from(this).inflate(R.layout.tool_view, null), "tools");
                 toolMap.put(key, tool);
 
                 //put tool layout inside the rack layout

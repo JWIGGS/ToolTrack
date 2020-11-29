@@ -17,10 +17,10 @@ public abstract class DatabaseView {
     private String key;
     private DatabaseReference ref;
 
-    public DatabaseView(DatabaseReference refData, DataSnapshot snap, View v, String child){
+    public DatabaseView(DatabaseReference refFabLab, DataSnapshot snap, View v, String child){
         this.key = snap.getKey();
         this.view = v;
-        this.ref = refData.child(child).child(key);
+        this.ref = refFabLab.child(child).child(key);
 
         updateData(snap);
     }

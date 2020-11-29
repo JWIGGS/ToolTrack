@@ -26,9 +26,9 @@ public class Tool extends DatabaseView{
     private String user;
 
 
-    public Tool(DatabaseReference refData, DataSnapshot snap, View view, String child){
+    public Tool(DatabaseReference refFabLab, DataSnapshot snap, View view, String child){
 
-        super(refData, snap, view, child);
+        super(refFabLab, snap, view, child);
 
     }
 

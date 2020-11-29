@@ -31,9 +31,9 @@ public class Rack extends DatabaseView{
     private HashMap<String, Boolean> avail = new HashMap<String, Boolean>();
 
 
-    public Rack(DatabaseReference refData, DataSnapshot snap, View view, String child){
+    public Rack(DatabaseReference refFabLab, DataSnapshot snap, View view, String child){
 
-        super(refData, snap, view, child);
+        super(refFabLab, snap, view, child);
 
     }
 
