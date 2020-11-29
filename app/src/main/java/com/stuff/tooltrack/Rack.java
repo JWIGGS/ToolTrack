@@ -21,15 +21,20 @@ public class Rack extends DatabaseView{
 
     private String name;
     private List<String> tools;
-    private long unlocked;
+    private String unlocked;
 
 
     public Rack(DatabaseReference refData, DataSnapshot snap, View view, String child){
 
         super(refData, snap, view, child);
 
+    }
+
+
+    @Override
+    protected void updateData(DataSnapshot snap) {
         name = snap.child("name").getValue().toString();
-        unlocked = (long) snap.child("unlocked").getValue();
+        unlocked = snap.child("unlocked").getValue().toString();
 
         /* this code doesnt work. we somehow need to decode the 0: tool0, 1: tool1 from firebase into our list here
         if(rack.child("tools").hasChildren()) {
@@ -38,31 +43,26 @@ public class Rack extends DatabaseView{
             }
         }
         */
+
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public long getUnlocked() {
-        return unlocked;
-    }
-
-    public void updateView(boolean admin){
+    @Override
+    protected void updateView(boolean admin){
 
         View v = getView();
 
         TextView textViewRackName = v.findViewById(R.id.textViewRackName);
         FloatingActionButton buttonRackEdit = v.findViewById(R.id.buttonRackEdit);
+        FloatingActionButton buttonRackLock = v.findViewById(R.id.buttonRackLock);
 
         textViewRackName.setText(getName());
 
         buttonRackEdit.setVisibility(admin? View.VISIBLE: View.GONE);
         buttonRackEdit.setTag(getKey());
+
+        buttonRackLock.setImageResource(isLocked()? android.R.drawable.ic_secure: android.R.drawable.ic_partial_secure);
+        buttonRackLock.setTag(getKey());
+
 
     }
 
@@ -78,6 +78,44 @@ public class Rack extends DatabaseView{
         displayAlertView(context, popupView);
 
     }
+
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isLocked(){
+        return unlocked.isEmpty();
+    }
+
+
+    public void toggleLocked(User user){
+        if(isLocked()){
+            unlock(user);
+        }
+        else{
+            lock(user);
+        }
+
+    }
+
+
+    private void unlock(User user){
+        getRef().child("unlocked").setValue(user.getID());
+    }
+
+    private void lock(User user){
+        if(unlocked == user.getID()){
+            getRef().child("unlocked").setValue("");
+        }
+    }
+
+
 
 
 }

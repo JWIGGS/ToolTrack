@@ -70,7 +70,7 @@ public class ActivityView extends AppCompatActivity {
 
     }
 
-
+    //initialize and update the rack layouts
     public void updateRacks(DataSnapshot rackSnapshot){
 
         for(DataSnapshot rackData: rackSnapshot.getChildren()) {
@@ -81,26 +81,21 @@ public class ActivityView extends AppCompatActivity {
             if (rackMap.containsKey(key)) {
                 rack = rackMap.get(key);
             } else {
-
-                //create rack layout
-                View rackLayout = LayoutInflater.from(this).inflate(R.layout.rack_view, null);
-
                 //create a new rack
-                rack = new Rack(refData, rackData, rackLayout, "racks");
+                rack = new Rack(refData, rackData, LayoutInflater.from(this).inflate(R.layout.rack_view, null), "racks");
                 rackMap.put(key, rack);
 
                 //put rack layout inside main layout
                 linearLayout.addView(rack.getView());
             }
 
-            rack.updateView(user.isAdmin());
+            rack.update(rackData, user.isAdmin());
 
         }
 
     }
 
-
-    //initialize and update the layouts
+    //initialize and update the tools layouts
     public void updateTools(DataSnapshot toolSnapshot){
 
         for(DataSnapshot toolData: toolSnapshot.getChildren()){
@@ -112,11 +107,8 @@ public class ActivityView extends AppCompatActivity {
                 tool = toolMap.get(key);
             }
             else{
-                //create tool layout
-                View toolLayout = LayoutInflater.from(this).inflate(R.layout.tool_view, null);
-
                 //create a new tool
-                tool = new Tool(refData, toolData, toolLayout, "tools");
+                tool = new Tool(refData, toolData, LayoutInflater.from(this).inflate(R.layout.tool_view, null), "tools");
                 toolMap.put(key, tool);
 
                 //put tool layout inside the rack layout
@@ -124,8 +116,8 @@ public class ActivityView extends AppCompatActivity {
                 rackLinearLayout.addView(tool.getView());
             }
 
-            tool.updateView(user.isAdmin());
 
+            tool.update(toolData, user.isAdmin());
 
         }
 
@@ -133,16 +125,17 @@ public class ActivityView extends AppCompatActivity {
 
 
     public void onToolEditButtonPressed(View v){
-
         toolMap.get(v.getTag()).displayEditPopup(this);
+    }
 
+    public void onRackLockButtonPressed(View v){
+        rackMap.get(v.getTag()).toggleLocked(user);
     }
 
     public void onRackEditButtonPressed(View v){
-
         rackMap.get(v.getTag()).displayEditPopup(this);
-
     }
+
 
 
 

@@ -23,19 +23,58 @@ public class Tool extends DatabaseView{
     private String name;
     private String rack;
     private long time;
-    private long user;
+    private String user;
+
 
     public Tool(DatabaseReference refData, DataSnapshot snap, View view, String child){
 
         super(refData, snap, view, child);
 
+    }
+
+    @Override
+    protected void updateData(DataSnapshot snap) {
         available = snap.child("available").getValue().toString().equals("true");
         name = snap.child("name").getValue().toString();
         rack = snap.child("rack").getValue().toString();
 
         time = (long) snap.child("time").getValue();
-        user = (long) snap.child("user").getValue();
+        user = snap.child("user").getValue().toString();
     }
+
+    @Override
+    protected void updateView(boolean admin){
+        View v = getView();
+
+        TextView textViewToolName = v.findViewById(R.id.textViewToolName);;
+        TextView textViewToolStatus = v.findViewById(R.id.textViewToolStatus);
+        TextView textViewToolLocation = v.findViewById(R.id.textViewToolLocation);
+        ImageView imageViewToolStatus = v.findViewById(R.id.imageViewToolStatus);
+        FloatingActionButton buttonToolEdit = v.findViewById(R.id.buttonToolEdit);
+
+        textViewToolName.setText(getName());
+
+        textViewToolStatus.setText("Status: "+(getAvailable()?"available": "not available"));
+        imageViewToolStatus.setImageResource(getAvailable()? android.R.drawable.presence_online: android.R.drawable.presence_offline);
+
+        textViewToolLocation.setText("Location: "+getRack());
+
+        buttonToolEdit.setVisibility(admin? View.VISIBLE: View.GONE);
+        buttonToolEdit.setTag(getKey());
+    }
+
+
+    public void displayEditPopup(Context context){
+        View popupView = LayoutInflater.from(context).inflate(R.layout.tool_edit_popup, null);
+
+        EditText editTextToolEditName = popupView.findViewById(R.id.editTextToolEditName);
+
+        editTextToolEditName.setText(name);
+
+        displayAlertView(context, popupView);
+
+    }
+
 
     public boolean getAvailable() {
         return available;
@@ -68,47 +107,16 @@ public class Tool extends DatabaseView{
         getRef().child("time").setValue(time);
     }
 
-    public long getUser() {
+    public String getUser() {
         return user;
     }
 
-    public void setUser(Integer user) {
+    public void setUser(String user) {
         this.user = user;
         getRef().child("user").setValue(user);
     }
 
 
 
-    public void updateView(boolean admin){
-        View v = getView();
-
-        TextView textViewToolName = v.findViewById(R.id.textViewToolName);;
-        TextView textViewToolStatus = v.findViewById(R.id.textViewToolStatus);
-        TextView textViewToolLocation = v.findViewById(R.id.textViewToolLocation);
-        ImageView imageViewToolStatus = v.findViewById(R.id.imageViewToolStatus);
-        FloatingActionButton buttonToolEdit = v.findViewById(R.id.buttonToolEdit);
-
-        textViewToolName.setText(getName());
-
-        textViewToolStatus.setText("Status: "+(getAvailable()?"available": "not available"));
-        imageViewToolStatus.setImageResource(getAvailable()? android.R.drawable.presence_online: android.R.drawable.presence_offline);
-
-        textViewToolLocation.setText("Location: "+getRack());
-
-        buttonToolEdit.setVisibility(admin? View.VISIBLE: View.GONE);
-        buttonToolEdit.setTag(getKey());
-    }
-
-
-    public void displayEditPopup(Context context){
-        View popupView = LayoutInflater.from(context).inflate(R.layout.tool_edit_popup, null);
-
-        EditText editTextToolEditName = popupView.findViewById(R.id.editTextToolEditName);
-
-        editTextToolEditName.setText(name);
-
-        displayAlertView(context, popupView);
-
-    }
 
 }

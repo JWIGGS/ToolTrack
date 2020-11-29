@@ -21,6 +21,8 @@ public abstract class DatabaseView {
         this.key = snap.getKey();
         this.view = v;
         this.ref = refData.child(child).child(key);
+
+        updateData(snap);
     }
 
 
@@ -28,7 +30,13 @@ public abstract class DatabaseView {
         return view;
     }
 
-    public abstract void updateView(boolean admin);
+    public void update(DataSnapshot data, boolean admin){
+        updateData(data);
+        updateView(admin);
+    }
+
+    protected abstract void updateData(DataSnapshot snap);
+    protected abstract void updateView(boolean admin);
 
     public String getKey(){
         return key;
