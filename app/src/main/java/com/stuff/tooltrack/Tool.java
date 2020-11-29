@@ -79,7 +79,7 @@ public class Tool extends DatabaseView{
 
 
 
-    public void updateView(){
+    public void updateView(boolean admin){
         View v = getView();
 
         TextView textViewToolName = v.findViewById(R.id.textViewToolName);;
@@ -95,6 +95,7 @@ public class Tool extends DatabaseView{
 
         textViewToolLocation.setText("Location: "+getRack());
 
+        buttonToolEdit.setVisibility(admin? View.VISIBLE: View.GONE);
         buttonToolEdit.setTag(getKey());
     }
 

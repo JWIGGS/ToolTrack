@@ -28,7 +28,7 @@ public abstract class DatabaseView {
         return view;
     }
 
-    public abstract void updateView();
+    public abstract void updateView(boolean admin);
 
     public String getKey(){
         return key;

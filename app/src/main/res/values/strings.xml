@@ -4,4 +4,6 @@
     <string name="default_student_email">@mymail.sutd.edu.sg</string>
     <string name="invalid_student_id">Invalid student ID</string>
     <string name="invalid_student_email">Invalid student email</string>
+    <string name="admin_id">123456789</string>
+    <string name="admin_email">fablab@mymail.sutd.edu.sg</string>
 </resources>

@@ -2,20 +2,14 @@ package com.stuff.tooltrack;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.AlertDialog;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.slider.RangeSlider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,7 +17,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class ActivityView extends AppCompatActivity {
 
@@ -36,15 +29,27 @@ public class ActivityView extends AppCompatActivity {
     HashMap<String, Tool> toolMap;
     HashMap<String, Rack> rackMap;
 
+    User user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view);
 
+        //initialize variables
         toolMap = new HashMap<String, Tool>();
         rackMap = new HashMap<String, Rack>();
 
         linearLayout = findViewById(R.id.linearLayoutMain);
+
+        Context context = getApplicationContext();
+
+        user = new User(context);
+
+        //invalid credentials
+        if(user.checkValidCredentials()){
+            finish();
+        }
 
         //listen for tool changes
         ValueEventListener changeListener = new ValueEventListener() {
@@ -88,7 +93,7 @@ public class ActivityView extends AppCompatActivity {
                 linearLayout.addView(rack.getView());
             }
 
-            rack.updateView();
+            rack.updateView(user.isAdmin());
 
         }
 
@@ -119,7 +124,7 @@ public class ActivityView extends AppCompatActivity {
                 rackLinearLayout.addView(tool.getView());
             }
 
-            tool.updateView();
+            tool.updateView(user.isAdmin());
 
 
         }

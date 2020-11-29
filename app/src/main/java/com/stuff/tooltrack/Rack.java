@@ -52,7 +52,7 @@ public class Rack extends DatabaseView{
         return unlocked;
     }
 
-    public void updateView(){
+    public void updateView(boolean admin){
 
         View v = getView();
 
@@ -60,6 +60,8 @@ public class Rack extends DatabaseView{
         FloatingActionButton buttonRackEdit = v.findViewById(R.id.buttonRackEdit);
 
         textViewRackName.setText(getName());
+
+        buttonRackEdit.setVisibility(admin? View.VISIBLE: View.GONE);
         buttonRackEdit.setTag(getKey());
 
     }
