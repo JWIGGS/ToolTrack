@@ -153,3 +153,16 @@ public class ActivityView extends AppCompatActivity {
 
 
 }
+
+/*TODO:
+
+2. update the user data object when obrrowing/returning
+3. view the history logs
+4. user view current checkout values
+5. tool edit
+6. rack edit (just name)
+7.
+
+
+
+ */

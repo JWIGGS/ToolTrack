@@ -22,7 +22,7 @@ public class Tool extends DatabaseView{
     private boolean available;
     private String name;
     private String rack;
-    private long time;
+    private String time;
     private String user;
 
 
@@ -38,7 +38,7 @@ public class Tool extends DatabaseView{
         name = snap.child("name").getValue().toString();
         rack = snap.child("rack").getValue().toString();
 
-        time = (long) snap.child("time").getValue();
+        time = snap.child("time").getValue().toString();
         user = snap.child("user").getValue().toString();
     }
 
@@ -98,11 +98,11 @@ public class Tool extends DatabaseView{
         getRef().child("rack").setValue(rack);
     }
 
-    public long getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(Integer time) {
+    public void setTime(String time) {
         this.time = time;
         getRef().child("time").setValue(time);
     }

@@ -131,6 +131,9 @@ public class Rack extends DatabaseView{
 
         updateCurrentAvailability(avail);
 
+        String timestamp = String.valueOf(System.currentTimeMillis());
+
+
         if(unlocked.equals(user.getID())){
             getRef().child("unlocked").setValue("");
             user.setRack("");
@@ -145,10 +148,16 @@ public class Rack extends DatabaseView{
 
                 if(toolAvail != toolAvailPrev){
                     historyChanges.put(tool.getKey(), toolAvail? "return": "borrow");
+
+                    tool.setTime(timestamp);
+                    tool.setUser(toolAvail? "": user.getID());
+
                 }
+
 
             }
 
+            //push history changes
             if(!historyChanges.isEmpty()){
 
                 HashMap<String, Object> historyEntry = new HashMap<String, Object>();
@@ -156,8 +165,10 @@ public class Rack extends DatabaseView{
                 historyEntry.put("user", user.getID());
                 historyEntry.put("tools", historyChanges);
 
-                getRef().getRoot().child("history").child(String.valueOf(System.currentTimeMillis())).setValue(historyEntry);
+                getRef().getRoot().child("history").child(timestamp).setValue(historyEntry);
             }
+
+
 
 
         }
