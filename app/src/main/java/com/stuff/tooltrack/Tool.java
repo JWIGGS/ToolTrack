@@ -43,10 +43,10 @@ public class Tool extends DatabaseView{
     }
 
     @Override
-    protected void updateView(boolean admin){
+    protected void updateView(User user){
         View v = getView();
 
-        TextView textViewToolName = v.findViewById(R.id.textViewToolName);;
+        TextView textViewToolName = v.findViewById(R.id.textViewToolName);
         TextView textViewToolStatus = v.findViewById(R.id.textViewToolStatus);
         TextView textViewToolLocation = v.findViewById(R.id.textViewToolLocation);
         ImageView imageViewToolStatus = v.findViewById(R.id.imageViewToolStatus);
@@ -59,7 +59,7 @@ public class Tool extends DatabaseView{
 
         textViewToolLocation.setText("Location: "+getRack());
 
-        buttonToolEdit.setVisibility(admin? View.VISIBLE: View.GONE);
+        buttonToolEdit.setVisibility(user.isAdmin()? View.VISIBLE: View.GONE);
         buttonToolEdit.setTag(getKey());
     }
 

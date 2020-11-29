@@ -10,6 +10,7 @@ public class User {
     private String id;
     private String email;
     private String name;
+    private String rack = "";
 
     private static Context context;
     private static SharedPreferences sharedPref;
@@ -101,6 +102,14 @@ public class User {
         int defaultEmailLength = context.getString(R.string.default_student_email).length();
 
         return email.substring(0, email.length()-defaultEmailLength);
+    }
+
+    public String getRack(){
+        return this.rack;
+    }
+
+    public void setRack(String rack){
+        this.rack = rack;
     }
 
 }

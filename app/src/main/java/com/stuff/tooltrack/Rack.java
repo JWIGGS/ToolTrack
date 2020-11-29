@@ -4,15 +4,19 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +24,11 @@ import java.util.Map;
 public class Rack extends DatabaseView{
 
     private String name;
-    private List<String> tools;
     private String unlocked;
+
+    private HashMap<String, Tool> toolMap = new HashMap<String, Tool>();
+    private HashMap<String, Boolean> availPrev = new HashMap<String, Boolean>();
+    private HashMap<String, Boolean> avail = new HashMap<String, Boolean>();
 
 
     public Rack(DatabaseReference refData, DataSnapshot snap, View view, String child){
@@ -35,19 +42,10 @@ public class Rack extends DatabaseView{
     protected void updateData(DataSnapshot snap) {
         name = snap.child("name").getValue().toString();
         unlocked = snap.child("unlocked").getValue().toString();
-
-        /* this code doesnt work. we somehow need to decode the 0: tool0, 1: tool1 from firebase into our list here
-        if(rack.child("tools").hasChildren()) {
-            for (DataSnapshot itemData : rack.child("tools").getChildren()) {
-                tools.add(itemData.getValue().toString());
-            }
-        }
-        */
-
     }
 
     @Override
-    protected void updateView(boolean admin){
+    protected void updateView(User user){
 
         View v = getView();
 
@@ -57,13 +55,33 @@ public class Rack extends DatabaseView{
 
         textViewRackName.setText(getName());
 
-        buttonRackEdit.setVisibility(admin? View.VISIBLE: View.GONE);
+        buttonRackEdit.setVisibility(user.isAdmin()? View.VISIBLE: View.GONE);
         buttonRackEdit.setTag(getKey());
 
         buttonRackLock.setImageResource(isLocked()? android.R.drawable.ic_secure: android.R.drawable.ic_partial_secure);
         buttonRackLock.setTag(getKey());
 
+        String userRack = user.getRack();
+        buttonRackLock.setVisibility(userRack.equals(getKey()) || userRack.isEmpty()? View.VISIBLE: View.GONE);
 
+    }
+
+    public void addTool(Tool tool){
+
+        LinearLayout rackLinearLayout = getView().findViewById(R.id.linearLayoutRack);
+        rackLinearLayout.addView(tool.getView());
+
+        toolMap.put(tool.getKey(), tool);
+        updateCurrentAvailability(avail);
+    }
+
+    private void updateCurrentAvailability(HashMap<String, Boolean> map){
+        if(!toolMap.isEmpty()) {
+            for (Tool tool : toolMap.values()) {
+                map.put(tool.getKey(), tool.getAvailable());
+            }
+
+        }
     }
 
 
@@ -78,8 +96,6 @@ public class Rack extends DatabaseView{
         displayAlertView(context, popupView);
 
     }
-
-
 
     public String getName() {
         return name;
@@ -105,13 +121,45 @@ public class Rack extends DatabaseView{
     }
 
 
-    private void unlock(User user){
+    public void unlock(User user){
         getRef().child("unlocked").setValue(user.getID());
+        user.setRack(getKey());
+        updateCurrentAvailability(availPrev);
     }
 
-    private void lock(User user){
-        if(unlocked == user.getID()){
+    public void lock(User user){
+
+        updateCurrentAvailability(avail);
+
+        if(unlocked.equals(user.getID())){
             getRef().child("unlocked").setValue("");
+            user.setRack("");
+
+            //update history log
+            HashMap<String, Object> historyChanges = new HashMap<String, Object>();
+
+            for(Tool tool: toolMap.values()){
+                String key = tool.getKey();
+                boolean toolAvail = avail.get(key);
+                boolean toolAvailPrev = availPrev.get(key);
+
+                if(toolAvail != toolAvailPrev){
+                    historyChanges.put(tool.getKey(), toolAvail? "return": "borrow");
+                }
+
+            }
+
+            if(!historyChanges.isEmpty()){
+
+                HashMap<String, Object> historyEntry = new HashMap<String, Object>();
+
+                historyEntry.put("user", user.getID());
+                historyEntry.put("tools", historyChanges);
+
+                getRef().getRoot().child("history").child(String.valueOf(System.currentTimeMillis())).setValue(historyEntry);
+            }
+
+
         }
     }
 

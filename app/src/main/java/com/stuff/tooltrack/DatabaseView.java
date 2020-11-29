@@ -30,13 +30,13 @@ public abstract class DatabaseView {
         return view;
     }
 
-    public void update(DataSnapshot data, boolean admin){
+    public void update(DataSnapshot data, User user){
         updateData(data);
-        updateView(admin);
-    }
+        updateView(user);
+    };
 
     protected abstract void updateData(DataSnapshot snap);
-    protected abstract void updateView(boolean admin);
+    protected abstract void updateView(User user);
 
     public String getKey(){
         return key;

@@ -17,6 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class ActivityView extends AppCompatActivity {
 
@@ -70,6 +71,17 @@ public class ActivityView extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        //lock all the racks
+        for(Rack rack: rackMap.values()){
+            rack.lock(user);
+        }
+
+    }
+
     //initialize and update the rack layouts
     public void updateRacks(DataSnapshot rackSnapshot){
 
@@ -89,7 +101,7 @@ public class ActivityView extends AppCompatActivity {
                 linearLayout.addView(rack.getView());
             }
 
-            rack.update(rackData, user.isAdmin());
+            rack.update(rackData, user);
 
         }
 
@@ -112,12 +124,12 @@ public class ActivityView extends AppCompatActivity {
                 toolMap.put(key, tool);
 
                 //put tool layout inside the rack layout
-                LinearLayout rackLinearLayout = rackMap.get(tool.getRack()).getView().findViewById(R.id.linearLayoutRack);
-                rackLinearLayout.addView(tool.getView());
+                rackMap.get(tool.getRack()).addTool(tool);
+
             }
 
 
-            tool.update(toolData, user.isAdmin());
+            tool.update(toolData, user);
 
         }
 
