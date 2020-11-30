@@ -1,9 +1,11 @@
 package com.stuff.tooltrack;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,6 +26,7 @@ public class Tool extends DatabaseView{
     private String time;
     private String user;
     private String username;
+    private AlertDialog pokeDialog;
 
 
     public Tool(DatabaseReference refFabLab, DataSnapshot snap, View view, String child){
@@ -59,7 +62,7 @@ public class Tool extends DatabaseView{
         imageViewToolStatus.setImageResource(getAvailable()? android.R.drawable.presence_online: android.R.drawable.presence_offline);
 
         boolean isBorrowed = !getUser().isEmpty();
-        boolean youBorrowed = getUser()==user.getID();
+        boolean youBorrowed = getUser().equals(user.getID());
 
         textViewToolUser.setVisibility(isBorrowed? View.VISIBLE: View.GONE);
         textViewToolTime.setVisibility(isBorrowed? View.VISIBLE: View.GONE);
@@ -67,10 +70,9 @@ public class Tool extends DatabaseView{
         if(isBorrowed) {
             textViewToolUser.setText("User: " + getUserName());
             textViewToolTime.setText("Borrowed: " + getTimePretty(getTime()));
-
-            textViewToolName.setTypeface(null, youBorrowed? Typeface.BOLD: Typeface.NORMAL);
         }
 
+        textViewToolName.setTypeface(null,isBorrowed && youBorrowed? Typeface.BOLD: Typeface.NORMAL);
         buttonToolPoke.setVisibility(isBorrowed && !youBorrowed? View.VISIBLE: View.GONE);
         buttonToolPoke.setTag(getKey());
 
@@ -89,6 +91,27 @@ public class Tool extends DatabaseView{
         displayAlertView(context, popupView);
 
     }
+
+    public void displayPokePopup(Context context){
+        View popupView = LayoutInflater.from(context).inflate(R.layout.poke_edit_popup, null);
+
+        TextView textViewPokeHint = popupView.findViewById(R.id.textViewPokeHint);
+        EditText editTextPokeMessage = popupView.findViewById(R.id.editTextPokeMessage);
+        Button buttonPokeSend = popupView.findViewById(R.id.buttonPokeSend);
+
+        buttonPokeSend.setTag(getKey());
+        pokeDialog = displayAlertView(context, popupView);
+
+
+
+    }
+
+    public void closePokePopup(){
+        pokeDialog.cancel();
+    }
+
+
+
 
 
     public boolean getAvailable() {

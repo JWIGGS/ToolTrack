@@ -167,6 +167,7 @@ public class Rack extends DatabaseView{
 
                     if(toolAvail){
                         user.returnTool(tool, timestamp);
+
                     }
                     else{
                         user.borrowTool(tool, timestamp);

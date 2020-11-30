@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,7 +28,11 @@ public class User {
     private static SharedPreferences sharedPref;
     private DatabaseReference refUser;
     private HashMap<String, String> inventory = new HashMap<String, String>();
+    private HashMap<String, DataSnapshot> pokes = new HashMap<String, DataSnapshot>();
     private TextView textViewInventory;
+    private TextView textViewPokes;
+    private FloatingActionButton buttonPokes;
+
 
     public User(Context context) {
         this.context = context;
@@ -43,7 +48,7 @@ public class User {
             ValueEventListener userChangeListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    updateInventory(dataSnapshot);
+                    updateData(dataSnapshot);
                 }
 
                 @Override
@@ -182,9 +187,20 @@ public class User {
         tool.setUser("", "");
 
         refUser.child("tools").child(tool.getKey()).removeValue();
+
+
+        for(DataSnapshot pokeData: pokes.values()){
+            if(pokeData.child("toolid").getValue().toString().equals(tool.getKey())){
+                refUser.child("pokes").child(pokeData.getKey()).removeValue();
+            }
+        }
+
+
     }
 
-    private void updateInventory(DataSnapshot snap){
+    private void updateData(DataSnapshot snap){
+
+        //update inventory
         inventory.clear();
         if(snap.child("tools").hasChildren()){
             for(DataSnapshot toolData: snap.child("tools").getChildren()) {
@@ -193,19 +209,39 @@ public class User {
         }
 
         if(textViewInventory!=null) {
-            int borrowedItems = getBorrowedItemCount();
+            int borrowedItems = inventory.size();
             textViewInventory.setText(borrowedItems > 0 ? String.valueOf(borrowedItems) : "");
         }
 
+        //update pokes
+        pokes.clear();
+
+        if(snap.child("pokes").hasChildren()){
+            for(DataSnapshot pokeData: snap.child("pokes").getChildren()) {
+                pokes.put(pokeData.getKey(), pokeData);
+            }
+        }
+
+        if(textViewPokes!=null && buttonPokes!=null) {
+            int pokeCount = pokes.size();
+
+            textViewPokes.setVisibility(pokeCount>0? View.VISIBLE: View.GONE);
+            buttonPokes.setVisibility(pokeCount>0? View.VISIBLE: View.GONE);
+
+            textViewPokes.setText(pokeCount > 0 ? String.valueOf(pokeCount) : "");
+        }
     }
 
     public void setTextViewInventory(TextView v){
         textViewInventory = v;
     }
 
-    public int getBorrowedItemCount(){
-        return inventory.size();
+    public void setPokeViews(TextView v, FloatingActionButton b){
+        textViewPokes = v;
+        buttonPokes = b;
     }
+
+
 
 
     public void displayInventoryPopup(Context context, HashMap<String, Tool> toolMap, HashMap<String, Rack> rackMap){
@@ -238,11 +274,66 @@ public class User {
 
             }
 
-
         }
 
 
         DatabaseView.displayAlertView(context, popupView);
+
+    }
+
+    public void displayPokePopup(Context context){
+        View popupView = LayoutInflater.from(context).inflate(R.layout.poke_view_popup, null);
+
+        LinearLayout linearLayoutPokes = popupView.findViewById(R.id.linearLayoutPokes);
+        TextView textViewPokeStatus = popupView.findViewById(R.id.textViewPokeStatus);
+
+        textViewPokeStatus.setText("You have been poked "+pokes.size()+" time"+(pokes.size()==1?"":"s")+". Returning the tool will remove your pokes.");
+
+
+        for(DataSnapshot pokeData: pokes.values()){
+
+            String message = pokeData.child("message").getValue().toString();
+            String tool = pokeData.child("tool").getValue().toString();
+            String username = pokeData.child("username").getValue().toString();
+            String time = Tool.getTimePretty(pokeData.getKey());
+
+
+            View pokeView = LayoutInflater.from(context).inflate(R.layout.poke_entry, null);
+
+            TextView textViewPokeEntryTool = pokeView.findViewById(R.id.textViewPokeEntryTool);
+            TextView textViewPokeEntrySender = pokeView.findViewById(R.id.textViewPokeEntrySender);
+            TextView textViewPokeEntryContent = pokeView.findViewById(R.id.textViewPokeEntryContent);
+
+            textViewPokeEntryTool.setText(tool);
+            textViewPokeEntrySender.setText("From "+username+" on "+time);
+            textViewPokeEntryContent.setText(message);
+
+            linearLayoutPokes.addView(pokeView, 0);
+
+        }
+
+
+
+        DatabaseView.displayAlertView(context, popupView);
+    }
+
+
+    public void sendPoke(Tool tool, String message){
+        HashMap<String, Object> pokeMessage = new HashMap<String, Object>();
+
+        String timestamp = String.valueOf(System.currentTimeMillis());
+
+        if(message.isEmpty()){
+            message = "Please return this item as I would like to use it. Thank you.";
+        }
+
+        pokeMessage.put("message", message);
+        pokeMessage.put("tool", tool.getName());
+        pokeMessage.put("toolid", tool.getKey());
+        pokeMessage.put("username", getName());
+
+        refUser.getParent().child(tool.getUser()).child("pokes").child(timestamp).setValue(pokeMessage);
+
 
     }
 

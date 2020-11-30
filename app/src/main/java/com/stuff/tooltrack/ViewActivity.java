@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -26,7 +27,9 @@ public class ViewActivity extends AppCompatActivity {
 
     LinearLayout linearLayout;
     TextView textViewInventoryAmount;
+    TextView textViewPokeAmount;
     FloatingActionButton buttonHistory;
+    FloatingActionButton buttonPokes;
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference refData = database.getReference();
@@ -49,12 +52,15 @@ public class ViewActivity extends AppCompatActivity {
 
         linearLayout = findViewById(R.id.linearLayoutMain);
         textViewInventoryAmount = findViewById(R.id.textViewInventoryAmount);
+        textViewPokeAmount = findViewById(R.id.textViewPokeAmount);
         buttonHistory = findViewById(R.id.buttonHistory);
+        buttonPokes = findViewById(R.id.buttonPokes);
 
         Context context = getApplicationContext();
 
         user = new User(context);
         user.setTextViewInventory(textViewInventoryAmount);
+        user.setPokeViews(textViewPokeAmount, buttonPokes);
 
         //invalid credentials
         if(!user.hasValidCredentials()){
@@ -89,6 +95,12 @@ public class ViewActivity extends AppCompatActivity {
             rack.lock(user);
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finish();
     }
 
     //initialize and update the rack layouts
@@ -150,6 +162,18 @@ public class ViewActivity extends AppCompatActivity {
         toolMap.get(v.getTag()).displayEditPopup(this);
     }
 
+    public void onToolPokeButtonPressed(View v){
+        toolMap.get(v.getTag()).displayPokePopup(this);
+    }
+
+    public void onPokeSendButtonPressed(View v){
+        View parentView = (View) v.getParent();
+        EditText editTextPokeMessage = parentView.findViewById(R.id.editTextPokeMessage);
+        user.sendPoke(toolMap.get(v.getTag()), editTextPokeMessage.getText().toString());
+
+        toolMap.get(v.getTag()).closePokePopup();
+    }
+
     public void onRackLockButtonPressed(View v){
         rackMap.get(v.getTag()).toggleLocked(user);
     }
@@ -158,8 +182,13 @@ public class ViewActivity extends AppCompatActivity {
         rackMap.get(v.getTag()).displayEditPopup(this);
     }
 
+
     public void onInventoryButtonPressed(View v){
         user.displayInventoryPopup(this, toolMap, rackMap);
+    }
+
+    public void onPokeButtonPressed(View v){
+        user.displayPokePopup(this);
     }
 
     public void onHistoryButtonPressed(View v){

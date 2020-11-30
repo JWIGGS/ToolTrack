@@ -12,9 +12,11 @@ import android.widget.TextView;
 
 public class LoginActivity extends AppCompatActivity {
 
-    EditText editTextStudentID;
-    EditText editTextStudentEmail;
+    EditText editTextUserID;
+    EditText editTextUserEmail;
     Button buttonLogin;
+    Button buttonAutofillAdmin;
+    Button buttonAutofillStudent;
     TextView textViewError;
 
     User user;
@@ -24,23 +26,25 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        editTextStudentID = findViewById(R.id.editTextStudentID);
-        editTextStudentEmail = findViewById(R.id.editTextStudentEmail);
+        editTextUserID = findViewById(R.id.editTextUserID);
+        editTextUserEmail = findViewById(R.id.editTextUserEmail);
         buttonLogin = findViewById(R.id.buttonLogin);
+        buttonAutofillAdmin = findViewById(R.id.buttonAutofillAdmin);
+        buttonAutofillStudent = findViewById(R.id.buttonAutofillStudent);
         textViewError = findViewById(R.id.textViewError);
 
         Context context = getApplicationContext();
 
         user = new User(context);
 
-        editTextStudentID.setText(user.getID());
-        editTextStudentEmail.setText(user.getEmail());
+        editTextUserID.setText(user.getID());
+        editTextUserEmail.setText(user.getEmail());
 
     }
 
 
     public void onButtonLoginPressed(View view){
-        user.setCredentials(editTextStudentID.getText().toString(), editTextStudentEmail.getText().toString());
+        user.setCredentials(editTextUserID.getText().toString(), editTextUserEmail.getText().toString());
 
         String error = user.getCredentialsError();
 
@@ -61,6 +65,17 @@ public class LoginActivity extends AppCompatActivity {
             textViewError.setText(error);
         }
 
+    }
+
+
+    public void onStudentButtonPressed(View v){
+        editTextUserID.setText(getString(R.string.autofill_student_id));
+        editTextUserEmail.setText(getString(R.string.autofill_student_email));
+    }
+
+    public void onAdminButtonPressed(View v){
+        editTextUserID.setText(getString(R.string.admin_id));
+        editTextUserEmail.setText(getString(R.string.admin_email));
     }
 
 }

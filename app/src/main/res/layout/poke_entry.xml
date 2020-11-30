@@ -1,49 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/textViewInventoryToolName"
+        android:id="@+id/textViewPokeEntryTool"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Tool Name"
         android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textViewInventoryToolLocation"
+        android:id="@+id/textViewPokeEntrySender"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="8dp"
-        android:text="Location: Rack 1"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:text="From John Doe"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewInventoryToolName" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewPokeEntryTool" />
 
     <TextView
-        android:id="@+id/textViewInventoryToolTime"
+        android:id="@+id/textViewPokeEntryContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="4dp"
-        android:text="Time: "
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:text="Poke Message Content"
+        android:textColor="@color/black"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewInventoryToolLocation" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewPokeEntrySender" />
 
     <View
-        android:id="@+id/divider7"
+        android:id="@+id/divider6"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="16dp"
         android:background="?android:attr/listDivider"
-        app:layout_constraintTop_toBottomOf="@+id/textViewInventoryToolTime"
-        tools:layout_editor_absoluteX="5dp" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewPokeEntryContent"
+        tools:layout_editor_absoluteX="20dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

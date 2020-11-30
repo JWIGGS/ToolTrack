@@ -46,7 +46,7 @@ public abstract class DatabaseView {
         return ref;
     }
 
-    public static void displayAlertView(Context context, View v){
+    public static AlertDialog displayAlertView(Context context, View v){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         v.setBackgroundResource(R.drawable.layout_bg_rounded);
@@ -56,6 +56,9 @@ public abstract class DatabaseView {
         AlertDialog dialog = builder.create();
         dialog.show();
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        return dialog;
+
     }
 
 }
