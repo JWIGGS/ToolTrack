@@ -1,6 +1,7 @@
 package com.stuff.tooltrack;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -58,16 +59,19 @@ public class Tool extends DatabaseView{
         imageViewToolStatus.setImageResource(getAvailable()? android.R.drawable.presence_online: android.R.drawable.presence_offline);
 
         boolean isBorrowed = !getUser().isEmpty();
+        boolean youBorrowed = getUser()==user.getID();
 
         textViewToolUser.setVisibility(isBorrowed? View.VISIBLE: View.GONE);
         textViewToolTime.setVisibility(isBorrowed? View.VISIBLE: View.GONE);
 
         if(isBorrowed) {
             textViewToolUser.setText("User: " + getUserName());
-            textViewToolTime.setText("Borrowed: " + getTimePretty());
+            textViewToolTime.setText("Borrowed: " + getTimePretty(getTime()));
+
+            textViewToolName.setTypeface(null, youBorrowed? Typeface.BOLD: Typeface.NORMAL);
         }
 
-        buttonToolPoke.setVisibility(isBorrowed && getUser()!=user.getID()? View.VISIBLE: View.GONE);
+        buttonToolPoke.setVisibility(isBorrowed && !youBorrowed? View.VISIBLE: View.GONE);
         buttonToolPoke.setTag(getKey());
 
         buttonToolEdit.setVisibility(user.isAdmin()? View.VISIBLE: View.GONE);
@@ -115,9 +119,9 @@ public class Tool extends DatabaseView{
         return time;
     }
 
-    public String getTimePretty(){
+    public static String getTimePretty(String timestamp){
         Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(Long.parseLong(time));
+        cal.setTimeInMillis(Long.parseLong(timestamp));
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE d MMM, HH:mm");
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+8"));
 

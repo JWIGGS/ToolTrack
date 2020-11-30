@@ -3,6 +3,7 @@ package com.stuff.tooltrack;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,10 +22,11 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ActivityView extends AppCompatActivity {
+public class ViewActivity extends AppCompatActivity {
 
     LinearLayout linearLayout;
     TextView textViewInventoryAmount;
+    FloatingActionButton buttonHistory;
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference refData = database.getReference();
@@ -46,6 +49,7 @@ public class ActivityView extends AppCompatActivity {
 
         linearLayout = findViewById(R.id.linearLayoutMain);
         textViewInventoryAmount = findViewById(R.id.textViewInventoryAmount);
+        buttonHistory = findViewById(R.id.buttonHistory);
 
         Context context = getApplicationContext();
 
@@ -57,6 +61,7 @@ public class ActivityView extends AppCompatActivity {
             finish();
         }
 
+        buttonHistory.setVisibility(user.isAdmin()? View.VISIBLE: View.INVISIBLE);
 
 
         //listen for fab lab changes
@@ -158,7 +163,9 @@ public class ActivityView extends AppCompatActivity {
     }
 
     public void onHistoryButtonPressed(View v){
-
+        //launch new activity
+        Intent intent = new Intent(this, HistoryActivity.class);
+        startActivity(intent);
     }
 
 

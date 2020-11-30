@@ -163,7 +163,7 @@ public class Rack extends DatabaseView{
                 boolean toolAvailPrev = availPrev.get(key);
 
                 if(toolAvail != toolAvailPrev){
-                    historyChanges.put(tool.getKey(), toolAvail? "return": "borrow");
+                    historyChanges.put(tool.getName(), toolAvail? "returned": "borrowed");
 
                     if(toolAvail){
                         user.returnTool(tool, timestamp);
@@ -184,6 +184,7 @@ public class Rack extends DatabaseView{
                 HashMap<String, Object> historyEntry = new HashMap<String, Object>();
 
                 historyEntry.put("user", user.getID());
+                historyEntry.put("username", user.getName());
                 historyEntry.put("tools", historyChanges);
 
                 getRef().getRoot().child("history").child(timestamp).setValue(historyEntry);

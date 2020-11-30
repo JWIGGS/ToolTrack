@@ -232,7 +232,7 @@ public class User {
 
                 textViewToolName.setText(tool.getName());
                 textViewToolLocation.setText("Location: "+rackMap.get(tool.getRack()).getName());
-                textViewToolTime.setText("Time Borrowed: "+tool.getTimePretty());
+                textViewToolTime.setText("Time Borrowed: "+Tool.getTimePretty(tool.getTime()));
 
                 linearLayoutInventory.addView(toolView);
 
