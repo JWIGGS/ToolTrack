@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,6 +23,7 @@ import java.util.Map;
 public class ActivityView extends AppCompatActivity {
 
     LinearLayout linearLayout;
+    TextView textViewInventoryAmount;
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference refData = database.getReference();
@@ -43,10 +45,12 @@ public class ActivityView extends AppCompatActivity {
         rackMap = new HashMap<String, Rack>();
 
         linearLayout = findViewById(R.id.linearLayoutMain);
+        textViewInventoryAmount = findViewById(R.id.textViewInventoryAmount);
 
         Context context = getApplicationContext();
 
         user = new User(context);
+        user.setTextViewInventory(textViewInventoryAmount);
 
         //invalid credentials
         if(!user.hasValidCredentials()){
@@ -136,6 +140,7 @@ public class ActivityView extends AppCompatActivity {
     }
 
 
+
     public void onToolEditButtonPressed(View v){
         toolMap.get(v.getTag()).displayEditPopup(this);
     }
@@ -148,19 +153,16 @@ public class ActivityView extends AppCompatActivity {
         rackMap.get(v.getTag()).displayEditPopup(this);
     }
 
+    public void onInventoryButtonPressed(View v){
+        user.displayInventoryPopup(this, toolMap, rackMap);
+    }
+
+    public void onHistoryButtonPressed(View v){
+
+    }
+
 
 
 
 
 }
-
-/*TODO:
-3. view the history logs
-4. user view current checkout values
-5. tool edit
-6. rack edit (just name)
-7.
-
-
-
- */

@@ -1,9 +1,6 @@
 package com.stuff.tooltrack;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -14,8 +11,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 public class Tool extends DatabaseView{
 
@@ -24,6 +22,7 @@ public class Tool extends DatabaseView{
     private String rack;
     private String time;
     private String user;
+    private String username;
 
 
     public Tool(DatabaseReference refFabLab, DataSnapshot snap, View view, String child){
@@ -40,6 +39,7 @@ public class Tool extends DatabaseView{
 
         time = snap.child("time").getValue().toString();
         user = snap.child("user").getValue().toString();
+        username = snap.child("username").getValue().toString();
     }
 
     @Override
@@ -47,19 +47,28 @@ public class Tool extends DatabaseView{
         View v = getView();
 
         TextView textViewToolName = v.findViewById(R.id.textViewToolName);
-        TextView textViewToolStatus = v.findViewById(R.id.textViewToolStatus);
-        TextView textViewToolLocation = v.findViewById(R.id.textViewToolLocation);
+        TextView textViewToolUser = v.findViewById(R.id.textViewToolUser);
+        TextView textViewToolTime = v.findViewById(R.id.textViewToolTime);
         ImageView imageViewToolStatus = v.findViewById(R.id.imageViewToolStatus);
         FloatingActionButton buttonToolEdit = v.findViewById(R.id.buttonToolEdit);
+        FloatingActionButton buttonToolPoke = v.findViewById(R.id.buttonToolPoke);
 
         textViewToolName.setText(getName());
 
-        textViewToolStatus.setText("Status: "+(getAvailable()?"available": "not available"));
-
         imageViewToolStatus.setImageResource(getAvailable()? android.R.drawable.presence_online: android.R.drawable.presence_offline);
 
+        boolean isBorrowed = !getUser().isEmpty();
 
-        textViewToolLocation.setText("Location: "+getRack());
+        textViewToolUser.setVisibility(isBorrowed? View.VISIBLE: View.GONE);
+        textViewToolTime.setVisibility(isBorrowed? View.VISIBLE: View.GONE);
+
+        if(isBorrowed) {
+            textViewToolUser.setText("User: " + getUserName());
+            textViewToolTime.setText("Borrowed: " + getTimePretty());
+        }
+
+        buttonToolPoke.setVisibility(isBorrowed && getUser()!=user.getID()? View.VISIBLE: View.GONE);
+        buttonToolPoke.setTag(getKey());
 
         buttonToolEdit.setVisibility(user.isAdmin()? View.VISIBLE: View.GONE);
         buttonToolEdit.setTag(getKey());
@@ -86,6 +95,8 @@ public class Tool extends DatabaseView{
         return name;
     }
 
+
+
     public void setName(String name) {
         this.name = name;
         getRef().child("name").setValue(name);
@@ -104,6 +115,15 @@ public class Tool extends DatabaseView{
         return time;
     }
 
+    public String getTimePretty(){
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(Long.parseLong(time));
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE d MMM, HH:mm");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+
+        return dateFormat.format(cal.getTime());
+    }
+
     public void setTime(String time) {
         this.time = time;
         getRef().child("time").setValue(time);
@@ -113,9 +133,16 @@ public class Tool extends DatabaseView{
         return user;
     }
 
-    public void setUser(String user) {
+    public void setUser(String user, String username) {
         this.user = user;
         getRef().child("user").setValue(user);
+
+        this.username = username;
+        getRef().child("username").setValue(username);
+    }
+
+    public String getUserName() {
+        return username;
     }
 
 
