@@ -72,7 +72,6 @@ public class Rack extends DatabaseView{
         rackLinearLayout.addView(tool.getView());
 
         toolMap.put(tool.getKey(), tool);
-        updateCurrentAvailability(avail);
     }
 
     private void updateCurrentAvailability(HashMap<String, Boolean> map){
