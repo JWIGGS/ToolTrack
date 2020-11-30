@@ -29,18 +29,20 @@ public class Tool extends DatabaseView{
     private String user;
     private String username;
     private int weight;
+
     private AlertDialog pokeDialog;
     private AlertDialog toolEditDialog;
 
+    public Tool(DatabaseReference refFabLab, DataSnapshot snap, Context context){
 
-    public Tool(DatabaseReference refFabLab, DataSnapshot snap, View view, String child){
-
-        super(refFabLab, snap, view, child);
+        super(refFabLab, snap,LayoutInflater.from(context).inflate(R.layout.tool_view, null), "tools");
 
     }
 
     @Override
     protected void updateData(DataSnapshot snap) {
+
+        //read the data from the snapshot and save it to the object variables
         available = snap.child("available").getValue().toString().equals("true");
         name = snap.child("name").getValue().toString();
         rack = snap.child("rack").getValue().toString();
@@ -53,8 +55,11 @@ public class Tool extends DatabaseView{
 
     @Override
     protected void updateView(User user){
+
+        //get the view from the DatabaseView
         View v = getView();
 
+        //find elements
         TextView textViewToolName = v.findViewById(R.id.textViewToolName);
         TextView textViewToolUser = v.findViewById(R.id.textViewToolUser);
         TextView textViewToolTime = v.findViewById(R.id.textViewToolTime);
@@ -62,33 +67,49 @@ public class Tool extends DatabaseView{
         FloatingActionButton buttonToolEdit = v.findViewById(R.id.buttonToolEdit);
         FloatingActionButton buttonToolPoke = v.findViewById(R.id.buttonToolPoke);
 
+        //set the title of the tool
         textViewToolName.setText(getName());
 
+        //change the image based on the tools availability
         imageViewToolStatus.setImageResource(getAvailable()? android.R.drawable.presence_online: android.R.drawable.presence_offline);
 
+        //check whether the tool is borrowed and if you borrowed the tool
         boolean isBorrowed = !getUser().isEmpty();
         boolean youBorrowed = getUser().equals(user.getID());
 
+        //show the user and time details only if the tool is borrowed
         textViewToolUser.setVisibility(isBorrowed? View.VISIBLE: View.GONE);
         textViewToolTime.setVisibility(isBorrowed? View.VISIBLE: View.GONE);
 
+        //updte the user and time details only if the tool is borrowed
         if(isBorrowed){
             textViewToolUser.setText("User: " + getUserName());
             textViewToolTime.setText("Borrowed: " + getTimePretty(getTime()));
         }
 
-        textViewToolName.setTypeface(null,isBorrowed && youBorrowed? Typeface.BOLD: Typeface.NORMAL);
+        //bold the name of the tool if you are the one who borrowed it
+        textViewToolName.setTypeface(null, isBorrowed && youBorrowed? Typeface.BOLD: Typeface.NORMAL);
+
+        //show the poke button if the tool is borrowed and you are not the one who borrowed it
         buttonToolPoke.setVisibility(isBorrowed && !youBorrowed? View.VISIBLE: View.GONE);
+
+        //set the tool poke tag so that we know which button was pressed
         buttonToolPoke.setTag(getKey());
 
+        //show the edit button if the user is an admin
         buttonToolEdit.setVisibility(user.isAdmin()? View.VISIBLE: View.GONE);
+
+        //set the tool edit tag so we know which tool we are editing later on
         buttonToolEdit.setTag(getKey());
     }
 
 
     public void displayEditPopup(Context context, HashMap<String, Rack> rackMap){
+
+        //create a popup view
         View popupView = LayoutInflater.from(context).inflate(R.layout.tool_edit_popup, null);
 
+        //fine elements
         EditText editTextToolEditName = popupView.findViewById(R.id.editTextToolEditName);
         TextView textViewToolEditStatus = popupView.findViewById(R.id.textViewToolEditStatus);
         TextView textViewToolEditLocation = popupView.findViewById(R.id.textViewToolEditLocation);
@@ -98,78 +119,107 @@ public class Tool extends DatabaseView{
         SeekBar seekBarToolEditWeight =  popupView.findViewById(R.id.seekBarToolEditWeight);
         Button buttonToolEditSave =  popupView.findViewById(R.id.buttonToolEditSave);
 
+        //set values
         editTextToolEditName.setText(name);
         textViewToolEditStatus.setText("Status: "+(getAvailable()?"Available": "Not Available"));
         textViewToolEditLocation.setText("Location: "+rackMap.get(getRack()).getName());
 
+        //check if the tool is borrowed
         boolean isBorrowed = !getUser().isEmpty();
 
+        //show the user and time details only if the tool is borrowed
         textViewToolEditTime.setVisibility(isBorrowed? View.VISIBLE: View.GONE);
         textViewToolEditUser.setVisibility(isBorrowed? View.VISIBLE: View.GONE);
 
+        //show the user and time details only if the tool is borrowed
         if(isBorrowed){
             textViewToolEditTime.setText(getTimePretty(getTime()));
             textViewToolEditUser.setText(getUserName()+" "+getUser());
         }
 
+        //set the initial value of the seek bar and text view
         seekBarToolEditWeight.setProgress(getWeight());
+        textViewToolEditSliderTip.setText("Weight Calibration: "+getWeight()+"g");
+
+        //create a seek bar listener
         seekBarToolEditWeight.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                //update the value of the text view to display the current progress
                 textViewToolEditSliderTip.setText("Weight Calibration: "+progress+"g");
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
+                //nobody cares
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                //nobody cares
             }
         });
 
-        textViewToolEditSliderTip.setText("Weight Calibration: "+getWeight()+"g");
-
+        //give the save button a tag so that we know which save button was pressed later on
         buttonToolEditSave.setTag(getKey());
 
+        //display and save the dialog so that we can cancel it later on
         toolEditDialog = displayAlertView(context, popupView);
 
     }
 
     public void closeEditPopup(View v){
 
+        //get the parent view of the save button
         View parentView = (View) v.getParent();
+
+        //find elements
         EditText editTextToolEditName = parentView.findViewById(R.id.editTextToolEditName);
         SeekBar seekBarToolEditWeight = parentView.findViewById(R.id.seekBarToolEditWeight);
 
+        //set the object variables to the values of the edit text and seek bar
         setName(editTextToolEditName.getText().toString());
         setWeight(seekBarToolEditWeight.getProgress());
 
+        //close the dialog
         toolEditDialog.cancel();
     }
 
     public void displayPokePopup(Context context){
+
+        //create a popup to poke users
         View popupView = LayoutInflater.from(context).inflate(R.layout.poke_edit_popup, null);
 
+        //find elements
         TextView textViewPokeHint = popupView.findViewById(R.id.textViewPokeHint);
         EditText editTextPokeMessage = popupView.findViewById(R.id.editTextPokeMessage);
         Button buttonPokeSend = popupView.findViewById(R.id.buttonPokeSend);
 
+        //set the hint value
+        editTextPokeMessage.setText("Poke "+getUserName()+" regarding "+getName());
+
+        //give the send button a tag so that we know which save button was pressed later on
         buttonPokeSend.setTag(getKey());
+
+        //display and save the dialog so that we can cancel it later on
         pokeDialog = displayAlertView(context, popupView);
 
-
-
     }
 
-    public void closePokePopup(){
+    public void closePokePopup(View v, User user, Tool tool){
+
+        //get the view of the send button
+        View parentView = (View) v.getParent();
+
+        //find elements
+        EditText editTextPokeMessage = parentView.findViewById(R.id.editTextPokeMessage);
+
+        //trigger a poke
+        user.sendPoke(tool, editTextPokeMessage.getText().toString());
+
+        //close the dialog
         pokeDialog.cancel();
     }
-
-
-
 
 
     public boolean getAvailable() {
@@ -182,6 +232,8 @@ public class Tool extends DatabaseView{
 
     public void setName(String name) {
         this.name = name;
+
+        //update the database
         getRef().child("name").setValue(name);
     }
 
@@ -191,6 +243,8 @@ public class Tool extends DatabaseView{
 
     public void setWeight(int weight){
         this.weight = weight;
+
+        //update the database
         getRef().child("weight").setValue(weight);
     }
 
@@ -200,20 +254,13 @@ public class Tool extends DatabaseView{
 
     public void setRack(String rack) {
         this.rack = rack;
+
+        //update the database
         getRef().child("rack").setValue(rack);
     }
 
     public String getTime() {
         return time;
-    }
-
-    public static String getTimePretty(String timestamp){
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(Long.parseLong(timestamp));
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE d MMM, HH:mm");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+8"));
-
-        return dateFormat.format(cal.getTime());
     }
 
     public void setTime(String time) {
@@ -227,10 +274,12 @@ public class Tool extends DatabaseView{
 
     public void setUser(String user, String username) {
         this.user = user;
-        getRef().child("user").setValue(user);
-
         this.username = username;
+
+        //update the database
+        getRef().child("user").setValue(user);
         getRef().child("username").setValue(username);
+
     }
 
     public String getUserName() {

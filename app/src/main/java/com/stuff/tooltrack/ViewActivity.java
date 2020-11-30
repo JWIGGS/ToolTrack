@@ -51,15 +51,15 @@ public class ViewActivity extends AppCompatActivity {
         toolMap = new HashMap<String, Tool>();
         rackMap = new HashMap<String, Rack>();
 
+        //find elements
         linearLayout = findViewById(R.id.linearLayoutMain);
         textViewInventoryAmount = findViewById(R.id.textViewInventoryAmount);
         textViewPokeAmount = findViewById(R.id.textViewPokeAmount);
         buttonHistory = findViewById(R.id.buttonHistory);
         buttonPokes = findViewById(R.id.buttonPokes);
 
-        Context context = getApplicationContext();
-
-        user = new User(context);
+        //create a new user
+        user = new User(getApplicationContext());
         user.setTextViewInventory(textViewInventoryAmount);
         user.setPokeViews(textViewPokeAmount, buttonPokes);
 
@@ -68,13 +68,15 @@ public class ViewActivity extends AppCompatActivity {
             finish();
         }
 
-        buttonHistory.setVisibility(user.isAdmin()? View.VISIBLE: View.INVISIBLE);
+        //hide history button if you are not admin
+        buttonHistory.setVisibility(user.isAdmin()? View.VISIBLE: View.GONE);
 
 
         //listen for fab lab changes
         ValueEventListener fablabChangeListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                //update values
                 updateRacks(dataSnapshot.child("racks"));
                 updateTools(dataSnapshot.child("tools"));
             }
@@ -98,6 +100,8 @@ public class ViewActivity extends AppCompatActivity {
 
     }
 
+    //kill the activity and basically flush this one so that current values arent cached
+    // (or something like that)
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -107,23 +111,23 @@ public class ViewActivity extends AppCompatActivity {
     //initialize and update the rack layouts
     public void updateRacks(DataSnapshot rackSnapshot){
 
+        //for each rack
         for(DataSnapshot rackData: rackSnapshot.getChildren()) {
 
             String key = rackData.getKey();
-            Rack rack;
 
             if (rackMap.containsKey(key)) {
-                rack = rackMap.get(key);
-            } else {
-                //create a new rack
-                rack = new Rack(refFabLab, rackData, LayoutInflater.from(this).inflate(R.layout.rack_view, null), "racks");
+                //if the rack exists then update it
+                rackMap.get(key).update(rackData, user);
+            }
+            else {
+                //rack doesnt exist so create a new rack
+                Rack rack = new Rack(refFabLab, rackData, getApplicationContext());
                 rackMap.put(key, rack);
 
                 //put rack layout inside main layout
                 linearLayout.addView(rack.getView());
             }
-
-            rack.update(rackData, user);
 
         }
 
@@ -132,17 +136,18 @@ public class ViewActivity extends AppCompatActivity {
     //initialize and update the tools layouts
     public void updateTools(DataSnapshot toolSnapshot){
 
+        //for every tool
         for(DataSnapshot toolData: toolSnapshot.getChildren()){
 
             String key = toolData.getKey();
-            Tool tool;
 
             if(toolMap.containsKey(key)) {
-                tool = toolMap.get(key);
+                //tool exists so update it
+                toolMap.get(key).update(toolData, user);
             }
             else{
-                //create a new tool
-                tool = new Tool(refFabLab, toolData, LayoutInflater.from(this).inflate(R.layout.tool_view, null), "tools");
+                //tool doesnt exist so create a new tool
+                Tool tool = new Tool(refFabLab, toolData, getApplicationContext());
                 toolMap.put(key, tool);
 
                 //put tool layout inside the rack layout
@@ -150,8 +155,6 @@ public class ViewActivity extends AppCompatActivity {
 
             }
 
-
-            tool.update(toolData, user);
 
         }
 
@@ -172,11 +175,7 @@ public class ViewActivity extends AppCompatActivity {
     }
 
     public void onPokeSendButtonPressed(View v){
-        View parentView = (View) v.getParent();
-        EditText editTextPokeMessage = parentView.findViewById(R.id.editTextPokeMessage);
-        user.sendPoke(toolMap.get(v.getTag()), editTextPokeMessage.getText().toString());
-
-        toolMap.get(v.getTag()).closePokePopup();
+        toolMap.get(v.getTag()).closePokePopup(v, user, toolMap.get(v.getTag()));
     }
 
     public void onRackLockButtonPressed(View v){
@@ -200,7 +199,7 @@ public class ViewActivity extends AppCompatActivity {
     }
 
     public void onHistoryButtonPressed(View v){
-        //launch new activity
+        //launch new history activity
         Intent intent = new Intent(this, HistoryActivity.class);
         startActivity(intent);
     }
