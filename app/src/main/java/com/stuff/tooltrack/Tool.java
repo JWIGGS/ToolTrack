@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -16,6 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.TimeZone;
 
 public class Tool extends DatabaseView{
@@ -26,7 +28,9 @@ public class Tool extends DatabaseView{
     private String time;
     private String user;
     private String username;
+    private int weight;
     private AlertDialog pokeDialog;
+    private AlertDialog toolEditDialog;
 
 
     public Tool(DatabaseReference refFabLab, DataSnapshot snap, View view, String child){
@@ -44,6 +48,7 @@ public class Tool extends DatabaseView{
         time = snap.child("time").getValue().toString();
         user = snap.child("user").getValue().toString();
         username = snap.child("username").getValue().toString();
+        weight = Integer.parseInt(snap.child("weight").getValue().toString());
     }
 
     @Override
@@ -67,7 +72,7 @@ public class Tool extends DatabaseView{
         textViewToolUser.setVisibility(isBorrowed? View.VISIBLE: View.GONE);
         textViewToolTime.setVisibility(isBorrowed? View.VISIBLE: View.GONE);
 
-        if(isBorrowed) {
+        if(isBorrowed){
             textViewToolUser.setText("User: " + getUserName());
             textViewToolTime.setText("Borrowed: " + getTimePretty(getTime()));
         }
@@ -81,15 +86,68 @@ public class Tool extends DatabaseView{
     }
 
 
-    public void displayEditPopup(Context context){
+    public void displayEditPopup(Context context, HashMap<String, Rack> rackMap){
         View popupView = LayoutInflater.from(context).inflate(R.layout.tool_edit_popup, null);
 
         EditText editTextToolEditName = popupView.findViewById(R.id.editTextToolEditName);
+        TextView textViewToolEditStatus = popupView.findViewById(R.id.textViewToolEditStatus);
+        TextView textViewToolEditLocation = popupView.findViewById(R.id.textViewToolEditLocation);
+        TextView textViewToolEditTime = popupView.findViewById(R.id.textViewToolEditTime);
+        TextView textViewToolEditUser = popupView.findViewById(R.id.textViewToolEditUser);
+        TextView textViewToolEditSliderTip = popupView.findViewById(R.id.textViewToolEditSliderTip);
+        SeekBar seekBarToolEditWeight =  popupView.findViewById(R.id.seekBarToolEditWeight);
+        Button buttonToolEditSave =  popupView.findViewById(R.id.buttonToolEditSave);
 
         editTextToolEditName.setText(name);
+        textViewToolEditStatus.setText("Status: "+(getAvailable()?"Available": "Not Available"));
+        textViewToolEditLocation.setText("Location: "+rackMap.get(getRack()).getName());
 
-        displayAlertView(context, popupView);
+        boolean isBorrowed = !getUser().isEmpty();
 
+        textViewToolEditTime.setVisibility(isBorrowed? View.VISIBLE: View.GONE);
+        textViewToolEditUser.setVisibility(isBorrowed? View.VISIBLE: View.GONE);
+
+        if(isBorrowed){
+            textViewToolEditTime.setText(getTimePretty(getTime()));
+            textViewToolEditUser.setText(getUserName()+" "+getUser());
+        }
+
+        seekBarToolEditWeight.setProgress(getWeight());
+        seekBarToolEditWeight.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                textViewToolEditSliderTip.setText("Weight Calibration: "+progress+"g");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        textViewToolEditSliderTip.setText("Weight Calibration: "+getWeight()+"g");
+
+        buttonToolEditSave.setTag(getKey());
+
+        toolEditDialog = displayAlertView(context, popupView);
+
+    }
+
+    public void closeEditPopup(View v){
+
+        View parentView = (View) v.getParent();
+        EditText editTextToolEditName = parentView.findViewById(R.id.editTextToolEditName);
+        SeekBar seekBarToolEditWeight = parentView.findViewById(R.id.seekBarToolEditWeight);
+
+        setName(editTextToolEditName.getText().toString());
+        setWeight(seekBarToolEditWeight.getProgress());
+
+        toolEditDialog.cancel();
     }
 
     public void displayPokePopup(Context context){
@@ -122,11 +180,18 @@ public class Tool extends DatabaseView{
         return name;
     }
 
-
-
     public void setName(String name) {
         this.name = name;
         getRef().child("name").setValue(name);
+    }
+
+    public int getWeight(){
+        return weight;
+    }
+
+    public void setWeight(int weight){
+        this.weight = weight;
+        getRef().child("weight").setValue(weight);
     }
 
     public String getRack() {

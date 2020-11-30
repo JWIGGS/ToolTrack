@@ -42,10 +42,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="56dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:text="Time:"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewToolEditLocation" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewToolEditUser" />
 
     <TextView
         android:id="@+id/textViewToolEditUser"
@@ -55,35 +55,38 @@
         android:layout_marginTop="8dp"
         android:text="User:"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewToolEditTime" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewToolEditLocation" />
 
     <TextView
         android:id="@+id/textViewToolEditSliderTip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="56dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="Weight Calibration"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewToolEditUser" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewToolEditTime" />
 
     <SeekBar
-        android:id="@+id/seekBar2"
+        android:id="@+id/seekBarToolEditWeight"
         android:layout_width="309dp"
         android:layout_height="30dp"
+        android:max="250"
+        android:min="0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewToolEditSliderTip" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/buttonToolEditSave"
         android:layout_width="246dp"
         android:layout_height="47dp"
         android:layout_marginTop="16dp"
+        android:onClick="onToolEditSavePressed"
         android:text="Save"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar2" />
+        app:layout_constraintTop_toBottomOf="@+id/seekBarToolEditWeight" />
 
     <View
         android:id="@+id/divider2"
@@ -94,7 +97,7 @@
         android:background="?android:attr/listDivider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button"
+        app:layout_constraintTop_toBottomOf="@+id/buttonToolEditSave"
         tools:visibility="invisible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

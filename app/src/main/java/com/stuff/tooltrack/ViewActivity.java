@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -159,7 +160,11 @@ public class ViewActivity extends AppCompatActivity {
 
 
     public void onToolEditButtonPressed(View v){
-        toolMap.get(v.getTag()).displayEditPopup(this);
+        toolMap.get(v.getTag()).displayEditPopup(this, rackMap);
+    }
+
+    public void onToolEditSavePressed(View v){
+        toolMap.get(v.getTag()).closeEditPopup(v);
     }
 
     public void onToolPokeButtonPressed(View v){
@@ -182,6 +187,9 @@ public class ViewActivity extends AppCompatActivity {
         rackMap.get(v.getTag()).displayEditPopup(this);
     }
 
+    public void onRackEditSavePressed(View v){
+        rackMap.get(v.getTag()).closeEditPopup(v);
+    }
 
     public void onInventoryButtonPressed(View v){
         user.displayInventoryPopup(this, toolMap, rackMap);

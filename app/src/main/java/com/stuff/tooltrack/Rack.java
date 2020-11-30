@@ -7,8 +7,10 @@ import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -29,6 +31,8 @@ public class Rack extends DatabaseView{
     private HashMap<String, Tool> toolMap = new HashMap<String, Tool>();
     private HashMap<String, Boolean> availPrev = new HashMap<String, Boolean>();
     private HashMap<String, Boolean> avail = new HashMap<String, Boolean>();
+
+    private AlertDialog rackEditPopup;
 
 
     public Rack(DatabaseReference refFabLab, DataSnapshot snap, View view, String child){
@@ -103,11 +107,24 @@ public class Rack extends DatabaseView{
         View popupView = LayoutInflater.from(context).inflate(R.layout.rack_edit_popup, null);
 
         EditText editTextRackEditName = popupView.findViewById(R.id.editTextRackEditName);
+        Button buttonRackEditSave = popupView.findViewById(R.id.buttonRackEditSave);
 
         editTextRackEditName.setText(name);
 
-        displayAlertView(context, popupView);
+        buttonRackEditSave.setTag(getKey());
 
+        rackEditPopup = displayAlertView(context, popupView);
+
+    }
+
+    public void closeEditPopup(View v){
+
+        View parentView = (View) v.getParent();
+        EditText editTextRackEditName = parentView.findViewById(R.id.editTextRackEditName);
+
+        setName(editTextRackEditName.getText().toString());
+
+        rackEditPopup.cancel();
     }
 
     public String getName() {
@@ -116,6 +133,7 @@ public class Rack extends DatabaseView{
 
     public void setName(String name) {
         this.name = name;
+        getRef().child("name").setValue(name);
     }
 
     public boolean isLocked(){
