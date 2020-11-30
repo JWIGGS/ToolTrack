@@ -61,9 +61,23 @@ public class Rack extends DatabaseView{
         buttonRackLock.setImageResource(isLocked()? android.R.drawable.ic_secure: android.R.drawable.ic_partial_secure);
         buttonRackLock.setTag(getKey());
 
-        String userRack = user.getRack();
-        buttonRackLock.setVisibility(userRack.equals(getKey()) || userRack.isEmpty()? View.VISIBLE: View.GONE);
 
+
+        String userRack = user.getRack();
+        boolean clickable = userRack.equals(getKey()) || getLockedUser().equals(userRack);
+
+        buttonRackLock.setClickable(clickable);
+        buttonRackLock.setAlpha(clickable? 1: .25f);
+
+        int color = R.color.bright_blue;
+        if(userRack.equals(getKey())){
+            color = R.color.orange;
+        }
+        else if(!getLockedUser().equals(userRack)){
+            color = R.color.gray;
+        }
+
+        buttonRackLock.setBackgroundTintList(buttonRackLock.getContext().getColorStateList(color));
     }
 
     public void addTool(Tool tool){
@@ -108,6 +122,9 @@ public class Rack extends DatabaseView{
         return unlocked.isEmpty();
     }
 
+    public String getLockedUser(){
+        return unlocked;
+    }
 
     public void toggleLocked(User user){
         if(isLocked()){

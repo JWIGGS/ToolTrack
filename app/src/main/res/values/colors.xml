@@ -13,6 +13,11 @@
     <color name="blue_variant">#4B89FF</color>
     <color name = "bright_blue">#6eebe7</color>
     <color name = "bright_blue_variant">#54c4c1</color>
+
+
+    <color name = "orange">#ed972d</color>
+    <color name = "gray">#d9d9d9</color>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

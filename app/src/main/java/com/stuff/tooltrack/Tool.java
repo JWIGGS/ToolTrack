@@ -55,7 +55,9 @@ public class Tool extends DatabaseView{
         textViewToolName.setText(getName());
 
         textViewToolStatus.setText("Status: "+(getAvailable()?"available": "not available"));
+
         imageViewToolStatus.setImageResource(getAvailable()? android.R.drawable.presence_online: android.R.drawable.presence_offline);
+
 
         textViewToolLocation.setText("Location: "+getRack());
 
