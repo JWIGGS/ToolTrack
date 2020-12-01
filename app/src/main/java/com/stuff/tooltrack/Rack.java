@@ -27,6 +27,7 @@ public class Rack extends DatabaseView{
 
     private String name;
     private String unlocked;
+    private String updated;
 
     private HashMap<String, Tool> toolMap = new HashMap<String, Tool>();
     private HashMap<String, Boolean> availPrev = new HashMap<String, Boolean>();
@@ -44,6 +45,7 @@ public class Rack extends DatabaseView{
         //read the data from the snapshot and save it to out object variables
         name = snap.child("name").getValue().toString();
         unlocked = snap.child("unlocked").getValue().toString();
+        updated = snap.child("updated").getValue().toString();
     }
 
     @Override
@@ -193,6 +195,9 @@ public class Rack extends DatabaseView{
         //set the value of the rack unlock to the current user who unlocked it
         getRef().child("unlocked").setValue(user.getID());
 
+        //set the value of the rack updated so the rpi knows the value has changed
+        getRef().child("updated").setValue("true");
+
         //set the rack of the user that it has opened this rack
         user.setRack(getKey());
 
@@ -213,6 +218,9 @@ public class Rack extends DatabaseView{
 
             //reset the rack to be locked
             getRef().child("unlocked").setValue("");
+
+            //set the value of the rack updated so the rpi knows the value has changed
+            getRef().child("updated").setValue("true");
 
             //reset the user rack to not be opening anything
             user.setRack("");
