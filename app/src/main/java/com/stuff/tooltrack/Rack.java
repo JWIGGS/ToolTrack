@@ -34,14 +34,14 @@ public class Rack extends DatabaseView{
 
     private AlertDialog rackEditPopup;
 
-    public Rack(DatabaseReference refFabLab, DataSnapshot snap, Context context){
-        super(refFabLab, snap, LayoutInflater.from(context).inflate(R.layout.rack_view, null), "racks");
+    public Rack(DatabaseReference refFabLab, DataSnapshot snap, View v, String child){
+        super(refFabLab, snap, v, child);
     }
 
 
     @Override
     protected void updateData(DataSnapshot snap) {
-        //read the data from the snapshot and save it to out obejct variables
+        //read the data from the snapshot and save it to out object variables
         name = snap.child("name").getValue().toString();
         unlocked = snap.child("unlocked").getValue().toString();
     }
@@ -56,6 +56,8 @@ public class Rack extends DatabaseView{
         TextView textViewRackName = v.findViewById(R.id.textViewRackName);
         FloatingActionButton buttonRackEdit = v.findViewById(R.id.buttonRackEdit);
         FloatingActionButton buttonRackLock = v.findViewById(R.id.buttonRackLock);
+
+        Log.i("UPDATE VIEW CHECK", getName());
 
         //set the name of the rack
         textViewRackName.setText(getName());

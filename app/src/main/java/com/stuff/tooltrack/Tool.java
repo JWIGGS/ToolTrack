@@ -33,9 +33,9 @@ public class Tool extends DatabaseView{
     private AlertDialog pokeDialog;
     private AlertDialog toolEditDialog;
 
-    public Tool(DatabaseReference refFabLab, DataSnapshot snap, Context context){
+    public Tool(DatabaseReference refFabLab, DataSnapshot snap, View v, String child){
 
-        super(refFabLab, snap,LayoutInflater.from(context).inflate(R.layout.tool_view, null), "tools");
+        super(refFabLab, snap, v, child);
 
     }
 

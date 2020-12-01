@@ -115,19 +115,21 @@ public class ViewActivity extends AppCompatActivity {
         for(DataSnapshot rackData: rackSnapshot.getChildren()) {
 
             String key = rackData.getKey();
-
+            Rack rack;
             if (rackMap.containsKey(key)) {
                 //if the rack exists then update it
-                rackMap.get(key).update(rackData, user);
+                rack = rackMap.get(key);
             }
             else {
-                //rack doesnt exist so create a new rack
-                Rack rack = new Rack(refFabLab, rackData, getApplicationContext());
+                //rack doesn't exist so create a new rack
+                rack = new Rack(refFabLab, rackData, LayoutInflater.from(this).inflate(R.layout.rack_view, null), "racks");
                 rackMap.put(key, rack);
 
                 //put rack layout inside main layout
                 linearLayout.addView(rack.getView());
             }
+
+            rack.update(rackData, user);
 
         }
 
@@ -140,20 +142,23 @@ public class ViewActivity extends AppCompatActivity {
         for(DataSnapshot toolData: toolSnapshot.getChildren()){
 
             String key = toolData.getKey();
+            Tool tool;
 
             if(toolMap.containsKey(key)) {
                 //tool exists so update it
-                toolMap.get(key).update(toolData, user);
+                tool = toolMap.get(key);
             }
             else{
                 //tool doesnt exist so create a new tool
-                Tool tool = new Tool(refFabLab, toolData, getApplicationContext());
+                tool = new Tool(refFabLab, toolData, LayoutInflater.from(this).inflate(R.layout.tool_view, null), "tools");
                 toolMap.put(key, tool);
 
                 //put tool layout inside the rack layout
                 rackMap.get(tool.getRack()).addTool(tool);
 
             }
+
+            tool.update(toolData, user);
 
 
         }

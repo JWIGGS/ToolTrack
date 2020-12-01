@@ -110,11 +110,11 @@ public class User {
     }
 
     private static String getSavedID(){
-        return sharedPref.getString("id", "");
+        return sharedPref.getString("id", context.getString(R.string.default_student_id));
     }
 
     private static String getSavedEmail(){
-        return sharedPref.getString("email", "");
+        return sharedPref.getString("email", context.getString(R.string.default_student_email));
     }
 
     public String getID(){
@@ -157,7 +157,13 @@ public class User {
 
         //split the name based on the delimiter "_"
         int defaultEmailLength = context.getString(R.string.default_student_email).length();
+        if(email.length() == defaultEmailLength){
+            return "";
+        }
+
         String[] splitName = email.substring(0, email.length()-defaultEmailLength).split("[_]");
+
+
         String returnName = "";
 
         //for each word in the name
