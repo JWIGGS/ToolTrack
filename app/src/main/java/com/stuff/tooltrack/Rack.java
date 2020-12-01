@@ -193,10 +193,7 @@ public class Rack extends DatabaseView{
 
     public void unlock(User user){
         //set the value of the rack unlock to the current user who unlocked it
-        getRef().child("unlocked").setValue(user.getID());
-
-        //set the value of the rack updated so the rpi knows the value has changed
-        getRef().child("updated").setValue("true");
+        setUnlocked(user.getID());
 
         //set the rack of the user that it has opened this rack
         user.setRack(getKey());
@@ -216,11 +213,8 @@ public class Rack extends DatabaseView{
             //grab the time
             String timestamp = String.valueOf(System.currentTimeMillis());
 
-            //reset the rack to be locked
-            getRef().child("unlocked").setValue("");
-
-            //set the value of the rack updated so the rpi knows the value has changed
-            getRef().child("updated").setValue("true");
+            //set the rack to be locked and that no user is accessing it
+            setUnlocked("");
 
             //reset the user rack to not be opening anything
             user.setRack("");
@@ -282,6 +276,14 @@ public class Rack extends DatabaseView{
 
 
         }
+    }
+
+    private void setUnlocked(String userID){
+        //reset the rack to be locked
+        getRef().child("unlocked").setValue(userID);
+
+        //set the value of the rack updated so the rpi knows the value has changed
+        getRef().child("updated").setValue(userID.isEmpty()? "close": "open");
     }
 
 
