@@ -51,7 +51,6 @@
         android:layout_marginStart="24dp"
         android:layout_marginBottom="4dp"
         android:text="Email"
-        android:textColor="@color/black"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/editTextUserEmail"
         app:layout_constraintStart_toStartOf="parent" />
@@ -63,17 +62,42 @@
         android:layout_marginStart="24dp"
         android:layout_marginBottom="4dp"
         android:text="Student ID"
-        android:textColor="@color/black"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/editTextUserID"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewStudentID2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="32dp"
+        android:text="Login"
+        android:textAlignment="viewStart"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewStudentID3" />
+
+    <TextView
+        android:id="@+id/textViewStudentID3"
+        android:layout_width="379dp"
+        android:layout_height="127dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="16dp"
+        android:text="FabLab Smart Cabinet"
+        android:textAlignment="viewStart"
+        android:textSize="50sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textViewError"
         android:layout_width="205dp"
         android:layout_height="33dp"
         android:gravity="center"
-        android:textColor="#FF0101"
+        android:textColor="@color/orange"
         app:layout_constraintBottom_toTopOf="@+id/buttonLogin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -83,7 +107,7 @@
         android:id="@+id/buttonAutofillStudent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="12dp"
+        android:layout_marginEnd="16dp"
         android:onClick="onStudentButtonPressed"
         android:text="Student"
         app:layout_constraintEnd_toEndOf="parent"
@@ -93,8 +117,8 @@
         android:id="@+id/buttonAutofillAdmin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="12dp"
+        android:layout_marginTop="284dp"
+        android:layout_marginEnd="24dp"
         android:onClick="onAdminButtonPressed"
         android:text="Admin"
         app:layout_constraintEnd_toEndOf="parent"

@@ -14,8 +14,10 @@
     <color name = "bright_blue">#6eebe7</color>
     <color name = "bright_blue_variant">#54c4c1</color>
 
-
+    <color name = "text_primary">#90ABB2</color>
+    <color name = "background">#F6F4F4</color>
     <color name = "orange">#ed972d</color>
+    <color name = "red_dark">#840C02</color>
     <color name = "gray">#d9d9d9</color>
 
     <color name="black">#FF000000</color>

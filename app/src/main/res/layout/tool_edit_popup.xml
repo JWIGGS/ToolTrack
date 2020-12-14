@@ -69,9 +69,11 @@
 
     <SeekBar
         android:id="@+id/seekBarToolEditWeight"
+        style="@android:style/Widget.DeviceDefault.Light.SeekBar"
         android:layout_width="309dp"
         android:layout_height="30dp"
-        android:max="250"
+        android:indeterminate="false"
+        android:max="3000"
         android:min="0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

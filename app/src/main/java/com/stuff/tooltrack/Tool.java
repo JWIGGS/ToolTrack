@@ -146,6 +146,8 @@ public class Tool extends DatabaseView{
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 //update the value of the text view to display the current progress
+                progress = Math.round(progress/10)*10;
+                seekBarToolEditWeight.setProgress(progress);
                 textViewToolEditSliderTip.setText("Weight Calibration: "+progress+"g");
             }
 
